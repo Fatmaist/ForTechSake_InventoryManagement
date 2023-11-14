@@ -2,7 +2,7 @@
     "dev" : {
         "driver": "pg",
         "user": "postgres",
-        "password": "fat12",
+        "password": "admin",
         "host": "localhost",
         "database": "FTS_Inventory"
     }
