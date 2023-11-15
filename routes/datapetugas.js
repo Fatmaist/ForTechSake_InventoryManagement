@@ -12,8 +12,9 @@ router.get("/datapetugas", (req, res) => {
   });
 });
 
-router.get("/datapetugas/id", (req, res) => {
-  pool.query("SELECT * FROM data_petugas ", (err, result) => {
+router.get("/datapetugas/:id_petugas", (req, res) => {
+    const { id_petugas } = req.params
+  pool.query("SELECT * FROM data_petugas WHERE id_petugas=$1", [id_petugas], (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -25,9 +26,8 @@ router.get("/datapetugas/id", (req, res) => {
 //API to post data_petugas
 router.post("/datapetugas", (req, res) => {
   pool.query(
-    "INSERT INTO data_petugas (id_petugas, nama_petugas, no_telepon, username, password) VALUES ($1, $2, $3, $4, $5)",
+    "INSERT INTO data_petugas (nama_petugas, no_telepon, username, password) VALUES ($1, $2, $3, $4)",
     [
-      req.body.id_petugas,
       req.body.nama_petugas,
       req.body.no_telepon,
       req.body.username,
@@ -44,11 +44,11 @@ router.post("/datapetugas", (req, res) => {
 
 //API to update data_petugas
 router.put("/datapetugas/:id", (req, res) => {
-  const { id_petugas, nama_petugas, no_telepon, username, password } = req.body;
+  const { nama_petugas, no_telepon, username, password } = req.body;
 
   pool.query(
-    "UPDATE data_petugas SET id_petugas=$1, nama_petugas=$2, no_telepon=$3, username=$4, password=$5 WHERE id_petugas=$6",
-    [id_petugas, nama_petugas, no_telepon, username, password, req.params.id],
+    "UPDATE data_petugas SET nama_petugas=$1, no_telepon=$2, username=$3, password=$4 WHERE id_petugas=$5",
+    [nama_petugas, no_telepon, username, password, req.params.id],
     (err, result) => {
       if (err) {
         throw err;
@@ -59,10 +59,9 @@ router.put("/datapetugas/:id", (req, res) => {
 });
 
 //API to delete data_petugas
-router.delete("/datapetugas/:id", (req, res) => {
+router.delete("/datapetugas/:id_petugas", (req, res) => {
   pool.query(
-    `DELETE FROM data_petugas WHERE id_petugas = ${req.params.id}`,
-    (err, result) => {
+    "DELETE FROM data_petugas WHERE id_petugas=$1", [req.params.id_petugas], (err, result) => {
       if (err) {
         throw err;
       }
@@ -71,4 +70,4 @@ router.delete("/datapetugas/:id", (req, res) => {
   );
 });
 
-module.exports = router;
+module.exports = router;
