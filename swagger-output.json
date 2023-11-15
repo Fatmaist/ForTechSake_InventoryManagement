@@ -55,6 +55,16 @@
         }
       }
     },
+    "/datapetugas/id": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/datapetugas/{id}": {
       "put": {
         "description": "",
