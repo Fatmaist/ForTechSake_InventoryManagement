@@ -228,7 +228,7 @@ router.delete('/restock/:id_restock', (req, res) => {
             console.log(err)
             res.status(500).send('Failed to delete data restock barang!')
         }
-        res.status(500).send('restock_barang deleted')
+        res.status(200).send('restock_barang deleted')
     })
 })
 
