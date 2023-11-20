@@ -20,15 +20,15 @@ const pool = require('../queries');
  *         description: Successful response
  *         content:
  *           application/json:
- *             example: [{"id_supplier": 1, "nama_supplier": "Supplier A", "no_telepon": 123456789, "alamat": "Address A"}]
+ *             example: {"status": 200, "message": "Success: Data suppliers exist", "data": [{"id_supplier": 1, "nama_supplier": "Supplier A", "no_telepon": 123456789, "alamat": "Address A"}]}
  */
 router.get('/data_suppliers', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM data_supplier');
-    res.status(200).json(result.rows);
+    res.status(200).json({ status: 200, message: 'Success: Data suppliers exist', data: result.rows });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
   }
 });
 
@@ -50,20 +50,25 @@ router.get('/data_suppliers', async (req, res) => {
  *         description: Successful response
  *         content:
  *           application/json:
- *             example: {"id_supplier": 1, "nama_supplier": "Supplier A", "no_telepon": 123456789, "alamat": "Address A"}
+ *             example: {"status": 200, "message": "Success: Data suppliers exist", "data": {"id_supplier": 1, "nama_supplier": "Supplier A", "no_telepon": 123456789, "alamat": "Address A"}}
+ *       404:
+ *         description: Data supplier not found
+ *         content:
+ *           application/json:
+ *             example: {"status": 404, "message": "Failed: Data supplier not found"}
  */
 router.get('/data_suppliers/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('SELECT * FROM data_supplier WHERE id_supplier = $1', [id]);
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Data supplier not found' });
+      res.status(404).json({ status: 404, message: 'Failed: Data supplier not found' });
     } else {
-      res.status(200).json(result.rows[0]);
+      res.status(200).json({ status: 200, message: 'Success: Data suppliers exist', data: result.rows[0] });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
   }
 });
 
@@ -83,23 +88,28 @@ router.get('/data_suppliers/:id', async (req, res) => {
  *         description: Data supplier created successfully
  *         content:
  *           application/json:
- *             example: {"id_supplier": 1, "nama_supplier": "Supplier B", "no_telepon": 987654321, "alamat": "Address B"}
+ *             example: {"status": 201, "message": "Success: Data supplier created", "data": {"id_supplier": 1, "nama_supplier": "Supplier B", "no_telepon": 987654321, "alamat": "Address B"}}
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example: {"status": 400, "message": "Failed: Bad Request"}
  */
- router.post('/data_suppliers', async (req, res) => {
-    const { id_supplier, nama_supplier, no_telepon, alamat } = req.body;
-  
-    try {
-      const result = await pool.query(
-        'INSERT INTO data_supplier (id_supplier, nama_supplier, no_telepon, alamat) VALUES ($1, $2, $3, $4) RETURNING *',
-        [id_supplier, nama_supplier, no_telepon, alamat]
-      );
-  
-      res.status(201).json(result.rows[0]);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+router.post('/data_suppliers', async (req, res) => {
+  const { id_supplier, nama_supplier, no_telepon, alamat } = req.body;
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO data_supplier (id_supplier, nama_supplier, no_telepon, alamat) VALUES ($1, $2, $3, $4) RETURNING *',
+      [id_supplier, nama_supplier, no_telepon, alamat]
+    );
+
+    res.status(201).json({ status: 201, message: 'Success: Data supplier created', data: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ status: 400, message: 'Failed: Bad Request' });
+  }
+});
 
 /**
  * @swagger
@@ -124,7 +134,17 @@ router.get('/data_suppliers/:id', async (req, res) => {
  *         description: Data supplier updated successfully
  *         content:
  *           application/json:
- *             example: {"id_supplier": 2, "nama_supplier": "Updated Supplier B", "no_telepon": 987654321, "alamat": "Updated Address B"}
+ *             example: {"status": 200, "message": "Success: Data supplier updated", "data": {"id_supplier": 2, "nama_supplier": "Updated Supplier B", "no_telepon": 987654321, "alamat": "Updated Address B"}}
+ *       404:
+ *         description: Data supplier not found
+ *         content:
+ *           application/json:
+ *             example: {"status": 404, "message": "Failed: Data supplier not found"}
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example: {"status": 400, "message": "Failed: Bad Request"}
  */
 router.put('/data_suppliers/:id', async (req, res) => {
   const { id } = req.params;
@@ -135,13 +155,13 @@ router.put('/data_suppliers/:id', async (req, res) => {
       [nama_supplier, no_telepon, alamat, id]
     );
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Data supplier not found' });
+      res.status(404).json({ status: 404, message: 'Failed: Data supplier not found' });
     } else {
-      res.status(200).json(result.rows[0]);
+      res.status(200).json({ status: 200, message: 'Success: Data supplier updated', data: result.rows[0] });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(400).json({ status: 400, message: 'Failed: Bad Request' });
   }
 });
 
@@ -159,21 +179,34 @@ router.put('/data_suppliers/:id', async (req, res) => {
  *         schema:
  *           type: integer
  *     responses:
- *       204:
+ *       200:
  *         description: Data supplier deleted successfully
+ *         content:
+ *           application/json:
+ *             example: {"status": 200, "message": "Success: Data supplier deleted"}
+ *       404:
+ *         description: Data supplier not found
+ *         content:
+ *           application/json:
+ *             example: {"status": 404, "message": "Failed: Data supplier not found"}
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             example: {"status": 500, "message": "Internal Server Error"}
  */
 router.delete('/data_suppliers/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('DELETE FROM data_supplier WHERE id_supplier = $1 RETURNING *', [id]);
     if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Data supplier not found' });
+      res.status(404).json({ status: 404, message: 'Failed: Data supplier not found' });
     } else {
-      res.status(204).send();
+      res.status(200).json({ status: 200, message: 'Success: Data supplier deleted' });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
   }
 });
 
