@@ -3,7 +3,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const bodyParser = require('body-parser');
 var pool = require('./queries')
-const routes = require('./routes/dataSupplier');
+const routes = require('./routes/data_supplier');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
