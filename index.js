@@ -1,11 +1,7 @@
 var express = require("express");
-var pool = require("./queries");
-const bodyParser = require("body-parser");
-var barangMasukRouter = require("./routes/barangMasuk");
 var app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+var pool = require("./queries");
+var barangMasukRouter = require("./routes/barangMasuk");
 
 app.use(barangMasukRouter);
 

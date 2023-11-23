@@ -1,49 +1,54 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../queries");
+const bodyParser = require("body-parser");
 
+router.use(bodyParser.json());
+
+//API to get all barang_masuk
 router.get("/barangmasuk", (req, res) => {
-  const limit = req.query.limit ? `LIMIT ${req.query.limit}` : "";
-
-  pool.query(`SELECT * FROM barang_masuk ${limit}`, (err, result) => {
+  pool.query("SELECT * FROM barang_masuk", (err, result) => {
     if (err) {
-      throw err;
+      console.log(err);
+      res.status(500).send({ message: "Failed to get data!" });
     }
-    res.json(result.rows);
+    res.status(200).json(result.rows);
   });
 });
 
+//API to get all barang_masuk by id_masuk
 router.get("/barangmasuk/:id", (req, res) => {
   pool.query(
     `SELECT * FROM barang_masuk WHERE id_masuk = ${req.params.id}`,
     (err, result) => {
       if (err) {
-        throw err;
+        console.log(err);
+        res.status(500).send({ message: "Failed to get data by id!" });
       }
-      res.json(result.rows);
+      res.status(200).json(result.rows);
     }
   );
 });
 
+//API to post barang_masuk
 router.post("/barangmasuk", (req, res) => {
+  const { id_masuk, id_barang, tanggal, nama_barang, jumlah } = req.body;
+
   pool.query(
     "INSERT INTO barang_masuk (id_masuk, id_barang, tanggal, nama_barang, jumlah) VALUES ($1, $2, $3, $4, $5)",
-    [
-      req.body.id_masuk,
-      req.body.id_barang,
-      req.body.tanggal,
-      req.body.nama_barang,
-      req.body.jumlah,
-    ],
+    [id_masuk, id_barang, tanggal, nama_barang, jumlah],
     (err, result) => {
       if (err) {
-        throw err;
+        console.log(err);
+        res.status(500).send("Failed to insert data barang masuk!");
+      } else {
+        res.status(200).send("data barang masuk added");
       }
-      res.send("data barang masuk added");
     }
   );
 });
 
+//API to update all atribut barang_masuk by id_masuk
 router.put("/barangmasuk/:id", (req, res) => {
   const { id_masuk, id_barang, tanggal, nama_barang, jumlah } = req.body;
 
@@ -52,21 +57,25 @@ router.put("/barangmasuk/:id", (req, res) => {
     [id_masuk, id_barang, tanggal, nama_barang, jumlah, req.params.id],
     (err, result) => {
       if (err) {
-        throw err;
+        console.log(err);
+        res.status(500).send("Failed to update data barang masuk!");
+      } else {
+        res.status(200).send("data barang masuk updated");
       }
-      res.send("data barang masuk updated");
     }
   );
 });
 
+//API to delete barang_masuk
 router.delete("/barangmasuk/:id", (req, res) => {
   pool.query(
     `DELETE FROM barang_masuk WHERE id_masuk = ${req.params.id}`,
     (err, result) => {
       if (err) {
-        throw err;
+        console.log(err);
+        res.status(500).send("Failed to delete data barang masuk!");
       }
-      res.send("data barang masuk deleted");
+      res.status(200).send("data barang masuk deleted");
     }
   );
 });
