@@ -1,6 +1,6 @@
  const app = require('../app.js')
  const request = require('supertest')
- const sabrina = "nama_petugas";
+ 
 
  describe('Data Petugas API Endpoints', () => {
   let createdpetugasId;
@@ -22,7 +22,7 @@
   // Test for endpoint POST /api/datapetugas
   it("should create data petugas", async () => {
     const res = await request(app).post("/api/datapetugas").send({
-      nama_petugas: sabrina,
+      nama_petugas: "sabrina",
       no_telepon: 85784568,
       username: "petugas300",
       password: "petugas300",
@@ -35,7 +35,7 @@
   //Test for endpoint PUT /api/datapetugas/{id_petugas}
   it("should update data petugas by id_petugas", async () => {
     const dataToUpdate = {
-      nama_petugas: sabrina,
+      nama_petugas: "sabrina",
       no_telepon: 85784568,
       username: "petugas300",
       password: "petugas300",
