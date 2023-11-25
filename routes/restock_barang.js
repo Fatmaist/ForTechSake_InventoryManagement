@@ -185,7 +185,7 @@ router.get('/restock/:id_restock', (req, res) => {
 })
 
 
-//API to post restock_barang
+//API to post restock barang
 router.post('/restock', (req, res) => {
     const { id_barang, tanggal, nama_barang, jumlah, status } = req.body
 
