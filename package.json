@@ -1,11 +1,10 @@
 {
   "name": "fortechsake_inventorymanagement",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "swagger": "swagger-jsdoc -d ./routes -o ./swagger-output.json && swagger-ui-express serve ./swagger-output.json",
+    "swagger": "node swagger.js swagger-jsdoc -d ./routes -o ./swagger-output.json && swagger-ui-express serve ./swagger-output.json",
     "seed": "node db/seeding.js",
     "start": "nodemon index.js"
   },
