@@ -81,7 +81,7 @@ var inventory = [
  * @swagger
  * tags:
  *   name: restock_barang
- *   description: the restock_barang managing API
+ *   description: the restock barang managing API
  * /restock:
  *   post:
  *     summary: Create a new restock_barang
@@ -166,9 +166,9 @@ router.get('/restock', (req, res) => {
     pool.query('SELECT * FROM restock_barang', (err, result) => {
         if (err) {
             console.log(err)
-            res.status(500).send({message: 'Failed to get data!'})
+            res.status(500).send({status: 500, message: 'Failed to get data by id!'})
         }
-        res.status(200).json(result.rows)
+        res.status(200).json({ status: 200, message: 'Success: Restock Barang exist', data: result.rows })
     })
 })
 
@@ -178,11 +178,12 @@ router.get('/restock/:id_restock', (req, res) => {
     pool.query('SELECT * FROM restock_barang WHERE id_restock=$1', [id_restock], (err, result) => {
         if (err) {
             console.log(err)
-            res.status(500).send({message: 'Failed to get data by id!'})
+            res.status(404).json({ status: 404, message: 'Failed: Data restock not found' })
         }
-        res.status(200).json(result.rows)
+        res.status(200).json({ status: 200, message: 'Success: Restock Barang exist', data: result.rows })
     })
 })
+
 
 //API to post restock_barang
 router.post('/restock', (req, res) => {
@@ -194,9 +195,9 @@ router.post('/restock', (req, res) => {
         (err, result) => {
             if (err) {
                 console.log(err)
-                res.status(500).send('Failed to insert data restock barang!')
+                res.status(500).send({ status: 500, message: 'Failed to insert data restock barang!' })
             } else {
-                res.status(200).send('restock_barang added')
+                res.status(201).send( { status: 201, message: 'restock barang created' })
             }
         }
     )
@@ -212,9 +213,9 @@ router.put('/restock/:id_restock', (req, res) => {
         (err, result) => {
             if (err) {
                 console.log(err)
-                res.status(500).send('Failed to update data restock barang!')
+                res.status(400).send({ status: 400, message: 'Failed to update data restock barang!' })
             } else {
-                res.status(200).send('restock_barang updated')
+                res.status(200).send({ status: 200, message: 'restock barang updated' })
             }
         }
     )
@@ -226,9 +227,9 @@ router.delete('/restock/:id_restock', (req, res) => {
     pool.query('DELETE FROM restock_barang WHERE id_restock=$1', [req.params.id_restock], (err, result) => {
         if (err) {
             console.log(err)
-            res.status(500).send('Failed to delete data restock barang!')
+            res.status(500).send({ status: 500, message: 'Failed to delete data restock barang!' })
         }
-        res.status(200).send('restock_barang deleted')
+        res.status(200).send({ status: 200, message: 'restock barang deleted' })
     })
 })
 
