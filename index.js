@@ -3,12 +3,14 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerDocument = require('./swagger-output.json');
 const swaggerDocument2 = require('./swagger-output2.json');
+const swaggerDocument3 = require('./swagger-output3.json');
 const bodyParser = require('body-parser');
 var pool = require('./queries')
 const data_supplier = require('./routes/data_supplier');
 const restock = require('./routes/restock_barang');
 const data_petugas = require('./routes/datapetugas');
 const barangMasuk = require('./routes/barangMasuk');
+const dataBarang = require('./routes/data_barang');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +23,7 @@ app.use('/', data_supplier);
 app.use('', restock);
 app.use('', data_petugas);
 app.use('', barangMasuk);
+app.use('', dataBarang);
 
 // Swagger setup
 const options = {
@@ -35,7 +38,7 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs)), swaggerUi.setup(swaggerDocument, swaggerDocument2);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs)), swaggerUi.setup(swaggerDocument, swaggerDocument2, swaggerDocument3);
 
 // Database Connection
 pool.connect((err, res) => {

@@ -2,8 +2,8 @@
     "dev" : {
         "driver": "pg",
         "user": "postgres",
-        "password": "fat12",
+        "password": "Beauty6969",
         "host": "localhost",
-        "database": "FTS_Inventory"
+        "database": "fts_inven"
     }
 }

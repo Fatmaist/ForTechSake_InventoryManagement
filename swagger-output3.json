@@ -1,0 +1,122 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Restfull API (For Tech Sake: Inventory Management)",
+        "description": "NodeJS Express + Postgresql API",
+        "version": "1.0.0"
+        },
+        "host": "localhost:3000",
+        "basePath": "/",
+        "schemes": [
+        "http"
+        ],
+        "paths": {
+        "/databarang": {
+            "get": {
+            "description": "Get all data_barang",
+            "responses": {
+                "200": {
+                "description": "OK"
+                }
+            }
+            },
+            "post": {
+            "description": "Add a new data_barang",
+            "parameters": [
+                {
+                "name": "body",
+                "in": "body",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                    "id_barang": {
+                        "example": 1
+                    },
+                    "nama_barang": {
+                        "example": "any"
+                    },
+                    "stok": {
+                        "example": 10
+                    },
+                    "id_kategori": {
+                        "example": 1
+                    },
+                    "id_supplier": {
+                        "example": 1
+                    }
+                    }
+                }
+                }
+            ],
+            "responses": {
+                "200": {
+                "description": "OK"
+                }
+            }
+            }
+        },
+        "/databarang/{id_barang}": {
+            "get": {
+            "description": "Get a specific data_barang by ID",
+            "responses": {
+                "200": {
+                "description": "OK"
+                }
+            }
+            },
+            "put": {
+            "description": "Update a specific data_barang by ID",
+            "parameters": [
+                {
+                "name": "id_barang",
+                "in": "path",
+                "required": true,
+                "type": "string"
+                },
+                {
+                "name": "body",
+                "in": "body",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                    "nama_barang": {
+                        "example": "any"
+                    },
+                    "stok": {
+                        "example": 20
+                    },
+                    "id_kategori": {
+                        "example": 2
+                    },
+                    "id_supplier": {
+                        "example": 2
+                    }
+                    }
+                }
+                }
+            ],
+            "responses": {
+                "200": {
+                "description": "OK"
+                }
+            }
+            },
+            "delete": {
+            "description": "Delete a specific data_barang by ID",
+            "parameters": [
+                {
+                "name": "id_barang",
+                "in": "path",
+                "required": true,
+                "type": "string"
+                }
+            ],
+            "responses": {
+                "200": {
+                "description": "OK"
+                }
+            }
+            }
+        }
+    }
+}
