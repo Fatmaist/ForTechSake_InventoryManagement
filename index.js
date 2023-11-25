@@ -1,10 +1,12 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerDocument = require('./swagger-output.json');
 const bodyParser = require('body-parser');
 var pool = require('./queries')
 const data_supplier = require('./routes/data_supplier');
 const restock = require('./routes/restock_barang');
+const data_petugas = require('./routes/datapetugas');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,13 +17,14 @@ app.use(bodyParser.json());
 // Routes
 app.use('/', data_supplier);
 app.use('', restock);
+app.use('', data_petugas);
 
 // Swagger setup
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Data Supplier API',
+      title: 'Data API',
       version: '1.0.0',
     },
   },
@@ -29,7 +32,7 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs)), swaggerUi.setup(swaggerDocument);
 
 // Database Connection
 pool.connect((err, res) => {
