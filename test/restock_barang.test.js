@@ -8,14 +8,15 @@ describe('Data Restock Barang API Endpoint', () => {
     it('should get data restock barang', async () => {
         const res = await request(app).get('/api/restock')
         expect(res.statusCode).toEqual(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(res.body.status).toBe(200)
+        expect(Array.isArray(res.body.data)).toBe(true)
     })
 
     // Test for endpoint GET /api/restock_barang/:id_restock
     it('should get data restock barang by id', async () => {
         const res = await request(app).get('/api/restock/1')
         expect(res.statusCode).toEqual(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(res.body.status).toBe(200)
     })
 
     // Test for endpoint POST /api/restock_barang
@@ -27,7 +28,8 @@ describe('Data Restock Barang API Endpoint', () => {
         jumlah: 10,
         status: 'Permintaan Barang'
         })
-        expect(res.statusCode).toEqual(200)
+        expect(res.statusCode).toEqual(201)
+        expect(res.body.status).toBe(201)
     })
 
     //Test for endpoint PUT /api/restock/{id_restock}
