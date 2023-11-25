@@ -8,8 +8,10 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/api', router)
 
-app.listen(port, () => {
-    console.log(`App Listening on http://localhost:${port}`)
-})
+if (process.env.NODE_ENV != "test") {
+    app.listen(port, () => {
+        console.log(`App Listening on http://localhost:${port}`)
+    })
+}
 
 module.exports = app
