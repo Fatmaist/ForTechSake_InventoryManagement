@@ -161,7 +161,7 @@ var inventory = [
  *         description: Some server error
  */
 
-//API to get all restock_barang
+//API to get all restock barang
 router.get('/restock', (req, res) => {
     pool.query('SELECT * FROM restock_barang', (err, result) => {
         if (err) {
@@ -172,7 +172,7 @@ router.get('/restock', (req, res) => {
     })
 })
 
-//API to get restock_barang by id_restock
+//API to get restock_barang by id restock
 router.get('/restock/:id_restock', (req, res) => {
     const { id_restock } = req.params
     pool.query('SELECT * FROM restock_barang WHERE id_restock=$1', [id_restock], (err, result) => {
@@ -185,7 +185,7 @@ router.get('/restock/:id_restock', (req, res) => {
 })
 
 
-//API to post restock_barang
+//API to post restock barang
 router.post('/restock', (req, res) => {
     const { id_barang, tanggal, nama_barang, jumlah, status } = req.body
 
