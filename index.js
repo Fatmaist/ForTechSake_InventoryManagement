@@ -1,31 +1,38 @@
-var express = require("express");
-var app = express();
-var pool = require("./queries");
-var swaggerJsDoc = require("swagger-jsdoc");
-var swaggerUi = require("swagger-ui-express");
-var databarangRouter = require("./routes/data_barang");
-app.use("", data_barang);
+const express = require("express");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const port = process.env.PORT || 3010;
+const app = express();
+const router = require("./routes/data_barang");
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
-pool.connect((err, res) => {
-  console.log(err);
-  console.log("connected");
-});
+// Middlewares
+app.use(helmet()); // Menambahkan middleware helmet untuk keamanan
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(morgan("combined")); // Menambahkan logging menggunakan morgan
 
+// Router
+app.use("/api", router);
+
+// Konfigurasi Swagger
 const options = {
   definition: {
     openapi: "3.0.1",
     info: {
       title: "Express API with Swagger",
       version: "1.0.0",
-      description: "This is a CRUD API for Data Barang of Management Inventory",
+      description:
+        "This is a CRUD API for Data Barang of Management Inventory Develop",
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "http://localhost:3010", // Sesuaikan dengan port server Anda
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: ["./routes/*.js"], // Pastikan sesuai dengan path file yang sesuai
 };
 
 const specs = swaggerJsDoc(options);
@@ -35,4 +42,15 @@ app.use(
   swaggerUi.setup(specs, { explorer: true })
 );
 
-app.listen(3000);
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
+});
+
+// Start Server
+app.listen(port, () => {
+  console.log(`App Listening on http://localhost:${port}`);
+});
+
+module.exports = app;

@@ -2,6 +2,37 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../queries");
 
+/**
+ * @swagger
+ * tags:
+ *   name: Data Barang
+ *   description: API for Data Barang operations
+ */
+
+/**
+ * @swagger
+ * /api/data_barang:
+ *   get:
+ *     summary: Fetch all data barang
+ *     tags: [Data Barang]
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 200
+ *               message: "Hooray: We found some magical data barang!"
+ *               data: []
+ *       500:
+ *         description: Internal Server Issue
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 500
+ *               message: "Oopsie Daisy: Our server had a little hiccup"
+ */
+
 router.get("/data_barang", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM data_barang");
@@ -18,6 +49,44 @@ router.get("/data_barang", async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /api/data_barang/{id_barang}:
+ *   get:
+ *     summary: Fetch a single data barang by ID
+ *     tags: [Data Barang]
+ *     parameters:
+ *       - in: path
+ *         name: id_barang
+ *         required: true
+ *         description: ID of the data barang
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 200
+ *               message: "Success: We found the treasure data barang!"
+ *               data: {}
+ *       404:
+ *         description: Data barang not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 404
+ *               message: "Oh no: Data barang went on a vacation, nowhere to be found!"
+ *       500:
+ *         description: Internal Server Issue
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 500
+ *               message: "Oopsie Daisy: Our server had a little hiccup"
+ */
 
 router.get("/data_barang/:id_barang", async (req, res) => {
   const { id_barang } = req.params;
@@ -47,6 +116,40 @@ router.get("/data_barang/:id_barang", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/data_barang:
+ *   post:
+ *     summary: Create a new data barang
+ *     tags: [Data Barang]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             id_barang: 456
+ *             nama_barang: "Barang Tester"
+ *             stok: 50
+ *             id_kategori: 1
+ *             id_supplier: 1
+ *     responses:
+ *       201:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 201
+ *               message: "Woo-hoo: We successfully spawned a new data barang!"
+ *               data: {}
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 400
+ *               message: "Oh Snap: Something went haywire with your request!"
+ */
+
 router.post("/data_barang", async (req, res) => {
   const { id_barang, nama_barang, stok, id_kategori, id_supplier } = req.body;
 
@@ -69,6 +172,53 @@ router.post("/data_barang", async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /api/data_barang/{id_barang}:
+ *   put:
+ *     summary: Update a data barang by ID
+ *     tags: [Data Barang]
+ *     parameters:
+ *       - in: path
+ *         name: id_barang
+ *         required: true
+ *         description: ID of the data barang
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             nama_barang: "Updated Product"
+ *             stok: 60
+ *             id_kategori: 2
+ *             id_supplier: 2
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 200
+ *               message: "Success: We gave our data barang a fancy makeover!"
+ *               data: {}
+ *       404:
+ *         description: Data barang not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 404
+ *               message: "Oh no: The elusive data barang seems to have slipped away!"
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 400
+ *               message: "Oh Snap: Something went haywire with your request!"
+ */
 
 router.put("/data_barang/:id_barang", async (req, res) => {
   const { id_barang } = req.params;
@@ -98,6 +248,43 @@ router.put("/data_barang/:id_barang", async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /api/data_barang/{id_barang}:
+ *   delete:
+ *     summary: Delete a data barang by ID
+ *     tags: [Data Barang]
+ *     parameters:
+ *       - in: path
+ *         name: id_barang
+ *         required: true
+ *         description: ID of the data barang
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 200
+ *               message: "Success: We bid farewell to the data barang! 🎉"
+ *       404:
+ *         description: Data barang not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 404
+ *               message: "Oh no: The data barang we wanted to delete is playing hide and seek!"
+ *       500:
+ *         description: Internal Server Issue
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 500
+ *               message: "Oopsie Daisy: Our server had a little hiccup"
+ */
 
 router.delete("/data_barang/:id_barang", async (req, res) => {
   const { id_barang } = req.params;
