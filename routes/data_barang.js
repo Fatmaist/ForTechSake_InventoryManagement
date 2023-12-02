@@ -11,9 +11,9 @@ const pool = require("../queries");
 
 /**
  * @swagger
- * /api/data_barang:
+ * /api/kategori_barang:
  *   get:
- *     summary: Fetch all data barang
+ *     summary: Fetch all kategori barang
  *     tags: [Data Barang]
  *     responses:
  *       200:
@@ -22,7 +22,7 @@ const pool = require("../queries");
  *           application/json:
  *             example:
  *               status: 200
- *               message: "Hooray: We found some magical data barang!"
+ *               message: "Hooray: We found some magical kategori barang!"
  *               data: []
  *       500:
  *         description: Internal Server Issue
@@ -32,13 +32,55 @@ const pool = require("../queries");
  *               status: 500
  *               message: "Oopsie Daisy: Our server had a little hiccup"
  */
-
-router.get("/data_barang", async (req, res) => {
+router.get("/kategori_barang", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM data_barang");
+    const result = await pool.query(
+      "SELECT id_kategori, nama_kategori FROM kategori_barang"
+    );
     res.status(200).json({
       status: 200,
-      message: "Hooray: We found some magical data barang!",
+      message: "Hooray: We found some magical kategori barang!",
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: "Oopsie Daisy: Our server had a little hiccup",
+    });
+  }
+});
+/**
+ * @swagger
+ * /api/data_supplier:
+ *   get:
+ *     summary: Fetch all data supplier
+ *     tags: [Data Barang]
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 200
+ *               message: "Hooray: We found some magical data supplier!"
+ *               data: []
+ *       500:
+ *         description: Internal Server Issue
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: 500
+ *               message: "Oopsie Daisy: Our server had a little hiccup"
+ */
+router.get("/data_supplier", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id_supplier, nama_supplier FROM data_supplier"
+    );
+    res.status(200).json({
+      status: 200,
+      message: "Hooray: We found some magical data supplier!",
       data: result.rows,
     });
   } catch (error) {
@@ -229,9 +271,8 @@ router.put("/data_barang/:id_barang", async (req, res) => {
       `
       UPDATE data_barang 
       SET nama_barang = $1, stok = $2, id_kategori = $3, id_supplier = $4 
-      FROM kategori_barang
-      WHERE data_barang.id_kategori = kategori_barang.id_kategori AND data_barang.id_barang = $5
-      RETURNING data_barang.*, kategori_barang.nama_kategori, kategori_barang.deskripsi
+      WHERE id_barang = $5
+      RETURNING *
       `,
       [nama_barang, stok, id_kategori, id_supplier, id_barang]
     );
