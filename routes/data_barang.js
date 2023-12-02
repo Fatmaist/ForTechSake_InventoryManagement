@@ -223,11 +223,19 @@ router.post("/data_barang", async (req, res) => {
 router.put("/data_barang/:id_barang", async (req, res) => {
   const { id_barang } = req.params;
   const { nama_barang, stok, id_kategori, id_supplier } = req.body;
+
   try {
     const result = await pool.query(
-      "UPDATE data_barang SET nama_barang = $1, stok = $2, id_kategori = $3, id_supplier = $4 WHERE id_barang = $5 RETURNING *",
+      `
+      UPDATE data_barang 
+      SET nama_barang = $1, stok = $2, id_kategori = $3, id_supplier = $4 
+      FROM kategori_barang
+      WHERE data_barang.id_kategori = kategori_barang.id_kategori AND data_barang.id_barang = $5
+      RETURNING data_barang.*, kategori_barang.nama_kategori, kategori_barang.deskripsi
+      `,
       [nama_barang, stok, id_kategori, id_supplier, id_barang]
     );
+
     if (result.rows.length === 0) {
       res.status(404).json({
         status: 404,
