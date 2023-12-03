@@ -65,7 +65,7 @@
         }
       }
     },
-    "/barangmasuk/{id}": {
+    "/barangkeluar/{id}": {
       "get": {
         "description": "",
         "parameters": [

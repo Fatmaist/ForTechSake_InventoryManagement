@@ -1,74 +1,259 @@
-const express = require("express");
-const router = express.Router();
-const pool = require("../queries");
+var express = require(`express`);
+var bodyParser = require(`body-parser`);
+var app = express();
 
-router.get("/barangkeluar", (req, res) => {
-  const limit = req.query.limit ? `LIMIT ${req.query.limit}` : "";
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  pool.query(`SELECT * FROM barang_keluar ${limit}`, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.json(result.rows);
-  });
-});
 
-router.get("/barangkeluar/:id", (req, res) => {
-  pool.query(
-    `SELECT * FROM barang_keluar WHERE id_keluar = ${req.params.id}`,
-    (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result.rows);
-    }
-  );
-});
+//require the router we definied in barangkeluar.js
+var barangkeluar = require(`./barangkeluar.js`);
 
-router.post("/barangkeluar", (req, res) => {
-  pool.query(
-    "INSERT INTO barang_keluar (id_barang, tanggal, nama_barang, jumlah, tempat_distributor) VALUES ($1, $2, $3, $4, $5)",
-    [
-      req.body.id_barang,
-      req.body.tanggal,
-      req.body.nama_barang,
-      req.body.jumlah,
-      req.body.tempat_distributor,
-    ],
-    (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send("data barang keluar added");
-    }
-  );
-});
+//use the router on the sub route /barangkeluar
+app.use(`/barangkeluar, barangkeluar`);
 
-router.put("/barangkeluar/:id", (req, res) => {
-  const { id_barang, tanggal, nama_barang, jumlah, tempat_distributor } = req.body;
+app.listen(3000)
 
-  pool.query(
-    "UPDATE barang_keluar SET id_barang=$1, tanggal=$2, nama_barang=$3, jumlah=$4, tempat_distributor=$5",
-    [ id_barang, tanggal, nama_barang, jumlah, tempat_distributor, req.params.id],
-    (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send("data barang keluar updated");
-    }
-  );
-});
+var router = express.Router();
+var barangkeluar = [
+    {id_keluar: 1, id_barang: 301, nama_barang: "Samsung Galaxy Z Flip 5", tanggal: "2003-09-15", jumlah: 5, tempat_distributor: "Nana Cell Jakarta"},
+]
 
-router.delete("/barangkeluar/:id", (req, res) => {
-  pool.query(
-    `DELETE FROM barang_keluar WHERE id_keluar = ${req.params.id}`,
-    (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.send("data barang keluar deleted");
-    }
-  );
-});
-
+//routes will go here
 module.exports = router;
+
+var inventory = [
+    pool.query('SELECT * FROM barangkeluar', (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+        inventory = result.rows
+    })
+]
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     barangkeluar:
+ *       type: object
+ *       required:
+ *         - id_barang
+ *         - tanggal
+ *         - nama_barang
+ *         - jumlah
+ *         - tempat_distributor
+ *       properties:
+ *         id_barang:
+ *           type: integer
+ *           description: ID dari barang keluar.
+ *         tanggal:
+ *           type: string
+ *           description: Tanggal Permintaan barang keluar.
+ *         nama_barang:
+ *           type: string
+ *           description: Nama barang yang ingin diajukan.
+ *         jumlah:
+ *           type: integer
+ *           description: Jumlah barang yang diminta.
+ *         tempat_distributor:
+ *           type: string
+ *           description: Tempat distribusi barang
+ *       example:
+ *          id_barang: 301
+ *          tanggal: 2023-09-15
+ *          nama_barang: Samsung Galaxy Flip 5
+ *          jumlah: 5
+ *          tempat _distributor: Nana Cell Jakarta
+ * 
+ */
+
+/**
+ * @swagger
+ * /keluar/{id_keluar}:
+ *   get:
+ *     summary: Get Data Barang keluar Berdasarkan ID
+ *     tags: [barangkeluar]
+ *     parameters:
+ *       - in: path
+ *         name: id_keluar
+ *         required: true
+ *         description: ID_Keluar dari barangkeluar yang ingin dicari
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: The requested Barang Keluar by id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/barangkeluar'
+ *       '404':
+ *         description: Barang Keluar not found
+ *       '500':
+ *         description: Some server error
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: barangkeluar
+ *   description: the barangkeluar managing API
+ * /keluar:
+ *   post:
+ *     summary: Create a new barangkeluar
+ *     tags: [barangkeluar]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/barangkeluar'
+ *     responses:
+ *       '200':
+ *         description: The created barangkeluar.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/barangkeluar'
+ *       '400':
+ *         description: Bad Request
+ *       '500':
+ *         description: Some server error
+ */
+
+/**
+ * @swagger
+ * /keluar/{id_keluar}:
+ *   put:
+ *     summary: Update Barang Keluar Berdasarkan ID
+ *     tags: [barangkeluar]
+ *     parameters:
+ *       - in: path
+ *         name: id_keluar
+ *         required: true
+ *         description: id_keluar dari barangkkeluar yang ingin diupdate
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/barangkeluar'
+ *     responses:
+ *       '200':
+ *         description: Update barangkeluar.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/barangkeluar'
+ *       '400':
+ *         description: Bad Request
+ *       '404':
+ *         description: id_keluar not found
+ *       '500':
+ *         description: Some server error
+ */
+
+/**
+ * @swagger
+ * /keluar/{id_keluar}:
+ *   delete:
+ *     summary: Delete a barangkeluar by id
+ *     tags: [barangkeluar]
+ *     parameters:
+ *       - in: path
+ *         name: id_keluar
+ *         required: true
+ *         description: ID of the barangkeluar to get
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: barang keluar successfully
+ *       '404':
+ *         description: barang keluar not found
+ *       '500':
+ *         description: Some server error
+ */
+
+var router = express.Router();
+var barangkeluar = [
+    {id_keluar: 1, id_barang: 301, nama_barang: "Samsung Galaxy Z Flip 5", tanggal: "2003-09-15", jumlah: 5, tempat_distributor: "Nana Cell Jakarta"},
+]
+//routes will go here
+module.exports = router;
+//API to get all barangkeluar
+router.get('/keluar', (req, res) => {
+  pool.query('SELECT * FROM barangkeluar', (err, result) => {
+      if (err) {
+          console.log(err)
+          res.status(500).send({message: 'Failed to get data!'})
+      }
+      res.status(200).json(result.rows)
+  })
+})
+
+//API to get barangkeluar by id_keluar
+router.get('/keluar/:id_keluar', (req, res) => {
+  const { id_keluar } = req.params
+  pool.query('SELECT * FROM barangkeluar WHERE id_keluar=$1', [id_keluar], (err, result) => {
+      if (err) {
+          console.log(err)
+          res.status(500).send({message: 'Failed to get data by id!'})
+      }
+      res.status(200).json(result.rows)
+  })
+})
+
+//API to post barangkeluar
+router.post('/keluar', (req, res) => {
+  const { id_barang, tanggal, nama_barang, jumlah, tempat_distributor } = req.body
+
+  pool.query(
+      'INSERT INTO barangkeluar (id_barang, tanggal, nama_barang, jumlah, tempat_distributor) VALUES ($1, $2, $3, $4, $5)',
+      [id_barang, tanggal, nama_barang, jumlah, tempat_distributor],
+      (err, result) => {
+          if (err) {
+              console.log(err)
+              res.status(500).send('Failed to insert data barang keluar!')
+          } else {
+              res.status(200).send('barangkeluar added')
+          }
+      }
+  )
+})
+
+//API to update all atribut barangkeluar by id_keluar
+router.put('/keluar/:id_keluar', (req, res) => {
+  const { id_barang, tanggal, nama_barang, jumlah, tempat_distributor } = req.body
+
+  pool.query(
+      'UPDATE barangkeluar SET id_barang=$1, tanggal=$2, nama_barang=$3, jumlah=$4, tempat_distributor=$5 WHERE id_keluar=$6',
+      [id_barang, tanggal, nama_barang, jumlah, tempat_distributor, req.params.id_keluar],
+      (err, result) => {
+          if (err) {
+              console.log(err)
+              res.status(500).send('Failed to update data barang keluar!')
+          } else {
+              res.status(200).send('barangkeluar updated')
+          }
+      }
+  )
+})
+
+
+//API to delete barang_keluar
+router.delete('/keluar/:id_keluar', (req, res) => {
+  pool.query('DELETE FROM barangkeluar WHERE id_keluar=$1', [req.params.id_keluar], (err, result) => {
+      if (err) {
+          console.log(err)
+          res.status(500).send('Failed to delete data barang keluar!')
+      }
+      res.status(200).send('barangkeluar deleted')
+  })
+})
+
+module.exports = router
